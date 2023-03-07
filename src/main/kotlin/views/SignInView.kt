@@ -5,16 +5,20 @@ import javafx.geometry.Orientation
 import javafx.geometry.Pos
 import javafx.scene.control.TextFormatter
 import javafx.scene.text.FontWeight
+import managers.UserManager
 import tornadofx.*
+import views.main.MainView
+import views.main.MainViewModel
 
 
-class MyView1 : View() {
+class SignInView : View() {
+    val permitLength = 5
     val practiceNumber = SimpleStringProperty()
     val rememberMe = SimpleBooleanProperty()
-    val signInEnable: BooleanBinding = practiceNumber.length().eq(6)
+    val signInEnable: BooleanBinding = practiceNumber.length().eq(permitLength)
     val practiceNumberFilter: (TextFormatter.Change) -> Boolean = { change ->
         !change.isAdded || change.controlNewText.let {
-            it.isInt() && it.length in 0..6
+            it.isInt() && it.length in 0..permitLength
         }
     }
     override val root = vbox {
@@ -40,6 +44,18 @@ class MyView1 : View() {
             }
             button("Sign In") {
                 enableWhen(signInEnable)
+                action {
+                    val user = UserManager().getUser(practiceNumber.get())
+                    if (user != null) {
+                        val signinScope = Scope()
+                        val model = MainViewModel(user)
+                        setInScope(model, signinScope)
+                        close()
+                        find(MainView::class, signinScope).openWindow()
+                    } else {
+                        error("Error", "No user found for #${practiceNumber.get()}")
+                    }
+                }
             }
         }
     }
