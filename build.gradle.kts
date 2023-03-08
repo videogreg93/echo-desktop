@@ -6,6 +6,7 @@ plugins {
     kotlin("jvm") version "1.7.20"
     kotlin("plugin.serialization") version "1.6.10"
     id("com.github.gmazzo.buildconfig") version "3.0.3"
+    id("org.openjfx.javafxplugin") version "0.0.9"
 }
 
 group = "org.hera"
@@ -13,6 +14,11 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+}
+
+javafx {
+    version = "16"
+    modules = listOf("javafx.controls", "javafx.fxml")
 }
 
 dependencies {
