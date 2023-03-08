@@ -2,16 +2,17 @@ package views.main
 
 import SignInView
 import javafx.geometry.Orientation
+import javafx.scene.control.Alert
+import javafx.scene.control.ButtonType
+import javafx.scene.control.TextField
+import javafx.scene.layout.Region
 import tornadofx.*
+import java.awt.Desktop
 
 class MainView() : View() {
 
     private val userViewModel: MainViewModel by inject()
     private val controller: MainViewController by inject()
-
-    init {
-        title = "${userViewModel.currentUser.givenName} - ${userViewModel.currentTemplate.name}"
-    }
 
     override val root = borderpane {
         prefWidth = 800.0
@@ -39,10 +40,34 @@ class MainView() : View() {
                     paddingHorizontal = 15
                     paddingVertical = 30
                 }
-                button("Record")
-                button("Export") {
+                button(controller.recordingButtonText) {
                     action {
-                        controller.export(userViewModel.currentTemplate.inputs, userViewModel.currentTemplate.templateFile)
+                        controller.onRecordButtonClicked()
+                    }
+                }
+                button("Export") {
+                    disableWhen(controller.isRecording)
+                    action {
+                        val file = controller.export(
+                            userViewModel.currentTemplate.inputs,
+                            userViewModel.currentTemplate.templateFile
+                        )
+                        if (file != null) {
+                            val alert = Alert(
+                                Alert.AlertType.CONFIRMATION,
+                                "File saved at ${file.absoluteFile}. Would you like to open the file?",
+                                ButtonType.OK, ButtonType.CANCEL
+                            ).apply {
+                                headerText = "Export successful!"
+                                isResizable = true
+                                dialogPane.setPrefSize(400.0, 200.0)
+                                dialogPane.minHeight(Region.USE_PREF_SIZE)
+                            }
+                            val buttonClicked = alert.showAndWait()
+                            if (buttonClicked.isPresent && buttonClicked.get() == ButtonType.OK) {
+                                Desktop.getDesktop().open(file)
+                            }
+                        }
                     }
                 }
             }
@@ -62,6 +87,27 @@ class MainView() : View() {
                     }
                 }
             }
+        }
+    }
+
+    init {
+        title = "${userViewModel.currentUser.givenName} - ${userViewModel.currentTemplate.name}"
+    }
+
+    override fun onBeforeShow() {
+        super.onBeforeShow()
+        root.scene.focusOwnerProperty().onChange {
+            (it as? TextField)?.let {
+                userViewModel.startingText.value = it.text
+            }
+        }
+        controller.speechManager.addRecognizingListener {
+            (root.scene.focusOwner as? TextField)?.text = userViewModel.startingText.value + it
+        }
+        controller.speechManager.addRecognizedListener {
+            val newText = userViewModel.startingText.value + it
+            (root.scene.focusOwner as? TextField)?.text = newText
+            userViewModel.startingText.value = newText
         }
     }
 }

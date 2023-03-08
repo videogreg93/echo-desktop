@@ -1,7 +1,11 @@
 package views.main
 
 import getResource
+import javafx.beans.property.SimpleBooleanProperty
+import javafx.beans.property.SimpleStringProperty
 import managers.FileManager
+import managers.speech.SpeechManager
+import managers.speech.SpeechManagerImpl
 import models.VoiceField
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.FilenameUtils
@@ -14,9 +18,24 @@ import java.nio.file.Files
 import javax.swing.JFileChooser
 import javax.swing.filechooser.FileNameExtensionFilter
 
-class MainViewController: Controller() {
+class MainViewController : Controller() {
 
-    fun export(inputs: List<VoiceField>, templateFile: String) {
+    val speechManager: SpeechManager = SpeechManagerImpl.instance
+    var isRecording = SimpleBooleanProperty(false)
+    val recordingButtonText = SimpleStringProperty("Record")
+
+    fun onRecordButtonClicked() {
+        isRecording.value = !isRecording.value
+        recordingButtonText.value = if (isRecording.value) {
+            speechManager.startContinuousRecognitionAsync()
+            "Recording..."
+        } else {
+            speechManager.stopContinuousRecognitionAsync()
+            "Record"
+        }
+    }
+
+    fun export(inputs: List<VoiceField>, templateFile: String): File? {
         val fileName = inputs.firstOrNull { it.isFileName }?.let {
             it.text.value + ".docx"
         } ?: "generated.docx"
@@ -26,7 +45,7 @@ class MainViewController: Controller() {
             val fileFilter = FileNameExtensionFilter("Only .docx files", "docx")
             addChoosableFileFilter(fileFilter)
         }
-        if (fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+        return if (fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
             var output = fileChooser.selectedFile
             if (!FilenameUtils.getExtension(fileChooser.name).equals("docx", ignoreCase = true)) {
                 output = File(
@@ -38,13 +57,16 @@ class MainViewController: Controller() {
                 inputs = inputs.map {
                     it.id to it.text.value
                 },
-                input = File(FileManager.mainFolder.toFile(), templateFile),
+                input = File("resources", templateFile),
                 output = FileOutputStream(output)
             )
+            output
+        } else {
+            null
         }
     }
 
-    private fun replaceIdsInDocument(inputs: List<Pair<String,String>>, input: File, output: FileOutputStream) {
+    private fun replaceIdsInDocument(inputs: List<Pair<String, String>>, input: File, output: FileOutputStream) {
         try {
             /**
              * if uploaded doc then use HWPF else if uploaded Docx file use
