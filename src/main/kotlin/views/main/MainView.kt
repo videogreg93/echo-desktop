@@ -14,14 +14,19 @@ class MainView() : View() {
     override val root = borderpane {
         prefWidth = 800.0
         prefHeight = 800.0
-        top = hbox {
+        top = flowpane {
             style {
-                spacing = Dimension(8.0, Dimension.LinearUnits.pt)
                 paddingHorizontal = 15
                 paddingVertical = 30
             }
             button("Record")
-            button("Export")
+            button("Export") {
+                action {
+                    userViewModel.currentTemplate.inputs.forEach {
+                        println(it.text)
+                    }
+                }
+            }
         }
         center = vbox {
             scrollpane(fitToWidth = true) {
