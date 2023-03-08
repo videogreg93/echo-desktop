@@ -5,6 +5,7 @@ import javafx.geometry.Orientation
 import javafx.scene.control.Alert
 import javafx.scene.control.ButtonType
 import javafx.scene.control.TextField
+import javafx.scene.input.KeyCombination
 import javafx.scene.layout.Region
 import tornadofx.*
 import java.awt.Desktop
@@ -31,8 +32,7 @@ class MainView() : View() {
                     }
                 }
                 menu("Edit") {
-                    item("Copy")
-                    item("Paste")
+                    item("Record")
                 }
             }
             hbox(spacing = 16) {
@@ -41,11 +41,13 @@ class MainView() : View() {
                     paddingVertical = 30
                 }
                 button(controller.recordingButtonText) {
+                    shortcut("Ctrl+R")
                     action {
                         controller.onRecordButtonClicked()
                     }
                 }
                 button("Export") {
+                    shortcut("Ctrl+E")
                     disableWhen(controller.isRecording)
                     action {
                         val file = controller.export(

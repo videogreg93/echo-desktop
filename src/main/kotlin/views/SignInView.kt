@@ -49,6 +49,7 @@ class SignInView : View() {
             }
             button("Sign In") {
                 enableWhen(signInEnable)
+                shortcut("Enter")
                 action {
                     val user = UserManager().getUser(practiceNumber.get())
                     if (user != null) {
