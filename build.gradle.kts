@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.7.20"
+    kotlin("plugin.serialization") version "1.6.10"
 }
 
 group = "org.hera"
@@ -13,6 +14,7 @@ repositories {
 
 dependencies {
     implementation("no.tornado:tornadofx:1.7.20")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
 }
 
 tasks.test {
