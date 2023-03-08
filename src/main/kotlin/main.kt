@@ -1,5 +1,10 @@
 import tornadofx.*
 
-fun main(args: Array<String>) {
-    launch<MainApplication>(args)
+class EchoApplication {
+    companion object {
+        @JvmStatic
+        fun main(args: Array<String>) {
+            launch<MainApplication>(args)
+        }
+    }
 }

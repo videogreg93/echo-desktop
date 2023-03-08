@@ -44,6 +44,24 @@ tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"
 }
 
+tasks.withType<Jar> {
+    manifest {
+        attributes["Main-Class"] = "EchoApplication"
+    }
+    // THIS IS SUPER IMPORTANT FOR THIS TO WORK DONT REMOVE
+    exclude("META-INF/*.RSA", "META-INF/*.SF","META-INF/*.DSA")
+    // To avoid the duplicate handling strategy error
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    // To add all of the dependencies
+    from(sourceSets.main.get().output)
+
+    dependsOn(configurations.runtimeClasspath)
+    from({
+        configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) }
+    })
+}
+
 buildConfig {
     buildConfigField("String", "SPEECH_API_KEY", "\"${getSpeechApiKey()}\"")
     buildConfigField("String", "APP_VERSION", "\"${version}\"")
