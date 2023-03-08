@@ -1,0 +1,14 @@
+{
+  "platform": "linux64",
+  "jdk": "https://github.com/ojdkbuild/contrib_jdk15u-ci/releases/download/jdk-15.0.1%2B9/jdk-15.0.1-ojdkbuild-linux-x64.zip",
+  "executable": "Echo",
+  "classpath": [
+    "build/libs/echo-desktop-1.0-SNAPSHOT.jar"
+  ],
+  "mainclass": "EchoApplication",
+  "vmargs": [
+    "Xmx1G"
+  ],
+  "minimizejre": "soft",
+  "output": "builds/linux"
+}
