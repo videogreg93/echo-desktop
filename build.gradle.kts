@@ -15,6 +15,16 @@ repositories {
 dependencies {
     implementation("no.tornado:tornadofx:1.7.20")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
+    implementation(
+        group = "org.apache.poi",
+        name = "poi",
+        version = "5.2.0"
+    )
+    implementation(
+        group = "org.apache.poi",
+        name = "poi-ooxml",
+        version = "5.2.0"
+    )
 }
 
 tasks.test {
