@@ -42,4 +42,4 @@ jobs:
           automatic_release_tag: "Latest"
           prerelease: false
           files: |
-            build/compose/binaries/main/msi/*.msi
+            build/libs/*.jar
