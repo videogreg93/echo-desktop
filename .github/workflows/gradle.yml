@@ -35,6 +35,8 @@ jobs:
         with:
           name: release
           path: build/libs/*.jar
+      - name: Create linux version
+        run: java -jar packr-all-4.0.0.jar packr-linux.json
       - name: Setup latest release
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
@@ -42,4 +44,8 @@ jobs:
           automatic_release_tag: "Latest"
           prerelease: false
           files: |
+            builds/linux/jre
+            builds/linux/Echo
+            builds/linux/Echo.json
+            builds/linux/echo-desktop-1.0-SNAPSHOT.jar
             build/libs/*.jar
