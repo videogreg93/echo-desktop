@@ -1,4 +1,6 @@
+import managers.text.TextBoy
 import tornadofx.*
+import java.util.*
 
 class EchoApplication {
     companion object {

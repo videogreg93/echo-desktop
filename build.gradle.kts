@@ -74,6 +74,29 @@ buildConfig {
     buildConfigField("Boolean", "SPEECH_ENABLED", "${getBooleanProperty("SPEECH_ENABLED", true)}")
 }
 
+task("regenerateMessages") {
+    val messagesFile = file("src/main/resources/i18n/messages.properties")
+    val enumFile = file("src/main/kotlin/i18n/Messages.kt")
+    enumFile.createNewFile()
+    val output = StringBuilder()
+    output.append(
+        """
+        package i18n
+        
+        enum class Messages(val value: String) {
+          
+    """.trimIndent()
+    )
+    val messagesProperties = Properties().apply {
+        load(FileInputStream(messagesFile))
+    }
+    messagesProperties.propertyNames().toList().filterIsInstance<String>().forEach {
+        output.append("$it(\"$it\"),\n")
+    }
+    output.append("}")
+    enumFile.writeText(output.toString())
+}
+
 fun getSpeechApiKey(): String {
     val value = System.getenv("SPEECH_API_KEY")
     return if (value == null) {

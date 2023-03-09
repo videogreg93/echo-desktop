@@ -1,0 +1,25 @@
+package i18n
+
+enum class Messages(val value: String) {
+  latestRelease("latestRelease"),
+recording("recording"),
+record("record"),
+chooseATemplate("chooseATemplate"),
+success("success"),
+sign_in_title("sign_in_title"),
+Menu_Load("Menu_Load"),
+genericError("genericError"),
+ok("ok"),
+rememberMe("rememberMe"),
+signIn("signIn"),
+latestReleaseUrl("latestReleaseUrl"),
+errorNoUserFound("errorNoUserFound"),
+success_message("success_message"),
+openCta("openCta"),
+Menu_Exit("Menu_Exit"),
+export("export"),
+appName("appName"),
+practiceNumberLabel("practiceNumberLabel"),
+foundABug("foundABug"),
+Menu_File("Menu_File"),
+}

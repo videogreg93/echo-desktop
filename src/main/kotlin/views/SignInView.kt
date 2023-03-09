@@ -1,3 +1,4 @@
+import i18n.Messages
 import javafx.beans.binding.BooleanBinding
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleStringProperty
@@ -8,6 +9,8 @@ import javafx.scene.text.FontWeight
 import javafx.stage.FileChooser
 import managers.TemplateManager
 import managers.UserManager
+import managers.text.TextBoy
+import managers.text.text
 import tornadofx.*
 import views.main.MainView
 import views.main.MainViewModel
@@ -24,11 +27,15 @@ class SignInView : View() {
         }
     }
 
+    init {
+        title = Messages.signIn.text
+    }
+
     override val root = vbox {
         prefWidth = 400.0
         prefHeight = 200.0
         hbox(alignment = Pos.CENTER) {
-            label("Sign In") {
+            label(Messages.sign_in_title.text) {
                 alignment = Pos.CENTER
                 style {
                     fontWeight = FontWeight.BOLD
@@ -38,23 +45,23 @@ class SignInView : View() {
         }
         form {
             fieldset(labelPosition = Orientation.VERTICAL) {
-                field("Practice Number") {
+                field(Messages.practiceNumberLabel.text) {
                     textfield(practiceNumber) {
                         filterInput(practiceNumberFilter)
                     }
                 }
                 field("") {
-                    checkbox("Remember Me", rememberMe)
+                    checkbox(Messages.rememberMe.text, rememberMe)
                 }
             }
-            button("Sign In") {
+            button(Messages.signIn.text) {
                 enableWhen(signInEnable)
                 shortcut("Enter")
                 action {
                     val user = UserManager().getUser(practiceNumber.get())
                     if (user != null) {
                         val file = chooseFile(
-                            "Choose a template",
+                            Messages.chooseATemplate.text,
                             filters = arrayOf(
                                 FileChooser.ExtensionFilter("Echo file", "*.echo")
                             ),
@@ -77,7 +84,10 @@ class SignInView : View() {
                             find(MainView::class, signinScope).openWindow()
                         }
                     } else {
-                        error("Error", "No user found for #${practiceNumber.get()}")
+                        error(
+                            Messages.genericError.text,
+                            TextBoy.getMessage(Messages.errorNoUserFound, practiceNumber.get())
+                        )
                     }
                 }
             }
