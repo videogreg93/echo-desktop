@@ -58,4 +58,4 @@ jobs:
           automatic_release_tag: "Latest"
           prerelease: false
           files: |
-            builds-linux.zip
+            releases/builds-linux.zip
