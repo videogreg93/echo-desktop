@@ -3,6 +3,8 @@ package managers.speech
 import managers.AudioManager
 
 interface SpeechManager {
+    var currentInputDevice: AudioManager.InputDevice?
+
     fun addRecognizingListener(listener: (String) -> Unit)
     fun addRecognizedListener(listener: (String) -> Unit)
     fun startContinuousRecognitionAsync()

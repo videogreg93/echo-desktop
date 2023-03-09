@@ -1,8 +1,13 @@
 package views.main
 
 import getResource
+import javafx.beans.property.Property
 import javafx.beans.property.SimpleBooleanProperty
+import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.property.SimpleStringProperty
+import javafx.collections.FXCollections
+import javafx.scene.control.TextField
+import managers.AudioManager
 import managers.FileManager
 import managers.speech.SpeechManager
 import managers.speech.SpeechManagerImpl
@@ -23,6 +28,16 @@ class MainViewController : Controller() {
     val speechManager: SpeechManager = SpeechManagerImpl.instance
     var isRecording = SimpleBooleanProperty(false)
     val recordingButtonText = SimpleStringProperty("Record")
+    val selectedMicrophoneInput = SimpleObjectProperty(speechManager.currentInputDevice).apply {
+        onChange {
+            it?.let { speechManager.setInputDevice(it) }
+            onChangeInputCallback()
+        }
+    }
+    val microphoneInputs = FXCollections.observableArrayList(speechManager.getSupportedInputDevices())
+    lateinit var selectedTextField: TextField
+
+    var onChangeInputCallback: () -> Unit = {}
 
     fun onRecordButtonClicked() {
         isRecording.value = !isRecording.value

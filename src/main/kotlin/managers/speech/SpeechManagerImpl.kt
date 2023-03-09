@@ -13,7 +13,7 @@ class SpeechManagerImpl(private val audioManager: AudioManager) : SpeechManager 
     private val regionCode = "eastus"
 
     private var recognizer: SpeechRecognizer
-    private var currentInputDevice = audioManager.getDefaultInputDevice()
+    override var currentInputDevice = audioManager.getDefaultInputDevice()
 
     init {
         println("Init SpeechManager")
@@ -78,6 +78,7 @@ class SpeechManagerImpl(private val audioManager: AudioManager) : SpeechManager 
 
     override fun setInputDevice(device: AudioManager.InputDevice) {
         currentInputDevice = device
+        println("Changing device to $device")
         recognizer = setupSpeech()
     }
 

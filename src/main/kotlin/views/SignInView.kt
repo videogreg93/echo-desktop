@@ -14,6 +14,7 @@ import managers.text.text
 import tornadofx.*
 import views.main.MainView
 import views.main.MainViewModel
+import java.io.File
 
 
 class SignInView : View() {
@@ -65,6 +66,7 @@ class SignInView : View() {
                             filters = arrayOf(
                                 FileChooser.ExtensionFilter("Echo file", "*.echo")
                             ),
+                            initialDirectory = config.string(FOLDER_LOCATION)?.let { File(it) }
                         ).firstOrNull()
                         if (file != null) {
                             // Sign in successful, get everything and go to main view
@@ -75,6 +77,8 @@ class SignInView : View() {
                                 } else {
                                     set("username", "")
                                 }
+                                // Save the file folder location
+                                set(FOLDER_LOCATION to file.parentFile.absolutePath)
                                 save()
                             }
                             val signinScope = Scope()
@@ -92,5 +96,9 @@ class SignInView : View() {
                 }
             }
         }
+    }
+
+    companion object {
+        private const val FOLDER_LOCATION = "folderLocation"
     }
 }

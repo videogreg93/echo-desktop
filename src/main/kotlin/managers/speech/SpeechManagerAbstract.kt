@@ -6,6 +6,8 @@ import managers.AudioManager
  * Empty version for when we dont actually need to do speech recognition
  */
 class SpeechManagerAbstract: SpeechManager {
+    override var currentInputDevice: AudioManager.InputDevice? = null
+
     override fun addRecognizingListener(listener: (String) -> Unit) {
 
     }

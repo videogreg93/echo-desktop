@@ -72,6 +72,9 @@ class MainView() : View() {
                         }
                     }
                 }
+                combobox(values = controller.microphoneInputs, property = controller.selectedMicrophoneInput) {
+
+                }
             }
         }
         center = vbox {
@@ -80,10 +83,13 @@ class MainView() : View() {
                     paddingHorizontal = 30
                 }
                 form {
-                    userViewModel.currentTemplate.inputs.forEach { voiceField ->
+                    userViewModel.currentTemplate.inputs.forEachIndexed { index, voiceField ->
                         fieldset(labelPosition = Orientation.VERTICAL) {
                             field(voiceField.label) {
-                                textfield(voiceField.text)
+                                val tf = textfield(voiceField.text)
+                                if (index == 0) {
+                                    controller.selectedTextField = tf
+                                }
                             }
                         }
                     }
@@ -94,6 +100,7 @@ class MainView() : View() {
 
     init {
         title = "${userViewModel.currentUser.givenName} - ${userViewModel.currentTemplate.name}"
+        controller.onChangeInputCallback = ::setupSpeechCallbacks
     }
 
     override fun onBeforeShow() {
@@ -101,15 +108,21 @@ class MainView() : View() {
         root.scene.focusOwnerProperty().onChange {
             (it as? TextField)?.let {
                 userViewModel.startingText.value = it.text
+                controller.selectedTextField = it
             }
         }
+        setupSpeechCallbacks()
+    }
+
+    private fun setupSpeechCallbacks() {
         controller.speechManager.addRecognizingListener {
-            (root.scene.focusOwner as? TextField)?.text = userViewModel.startingText.value + it
+            controller.selectedTextField.text = userViewModel.startingText.value + it
         }
         controller.speechManager.addRecognizedListener {
             val newText = userViewModel.startingText.value + it
-            (root.scene.focusOwner as? TextField)?.text = newText
+            controller.selectedTextField.text = newText
             userViewModel.startingText.value = newText
         }
+        println("Speech Callbacks set.")
     }
 }

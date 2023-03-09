@@ -17,7 +17,9 @@ class AudioManager {
                 return if (it.isBlank()) {
                     emptyList()
                 } else {
-                    Json.decodeFromString(it)
+                    val list: List<InputDevice> = Json.decodeFromString(it)
+                    println(list)
+                    list
                 }
             } ?: emptyList()
         } catch (e: Exception) {
@@ -32,5 +34,9 @@ class AudioManager {
     }
 
     @Serializable
-    data class InputDevice(val name: String, val id: String)
+    data class InputDevice(val name: String, val id: String) {
+        override fun toString(): String {
+            return name
+        }
+    }
 }
