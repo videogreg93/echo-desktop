@@ -16,7 +16,7 @@ on:
 jobs:
   build:
 
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     env:
       SPEECH_API_KEY: "${{ secrets.SPEECH_API_KEY }}"
     steps:
