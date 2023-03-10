@@ -1,6 +1,7 @@
 package managers.speech
 
 import com.microsoft.cognitiveservices.speech.CancellationReason
+import com.microsoft.cognitiveservices.speech.PhraseListGrammar
 import com.microsoft.cognitiveservices.speech.SpeechConfig
 import com.microsoft.cognitiveservices.speech.SpeechRecognizer
 import com.microsoft.cognitiveservices.speech.audio.AudioConfig
@@ -80,6 +81,13 @@ class SpeechManagerImpl(private val audioManager: AudioManager) : SpeechManager 
         currentInputDevice = device
         println("Changing device to $device")
         recognizer = setupSpeech()
+    }
+
+    override fun setPhraseList(phrases: List<String>) {
+        val phraselist = PhraseListGrammar.fromRecognizer(recognizer)
+        phrases.forEach {
+            phraselist.addPhrase(it)
+        }
     }
 
     companion object {
