@@ -7,8 +7,10 @@ import javafx.scene.control.ButtonType
 import javafx.scene.control.TextField
 import javafx.scene.input.KeyCombination
 import javafx.scene.layout.Region
+import javafx.stage.FileChooser
 import tornadofx.*
 import java.awt.Desktop
+import java.io.File
 
 class MainView() : View() {
 
@@ -50,7 +52,20 @@ class MainView() : View() {
                     shortcut("Ctrl+E")
                     disableWhen(controller.isRecording)
                     action {
+                        val fileName = userViewModel.currentTemplate.inputs.firstOrNull { it.isFileName }?.let {
+                            it.text.value + ".docx"
+                        } ?: "generated.docx"
+                        val outputFile = chooseFile(
+                            "Save",
+                            filters = arrayOf(
+                                FileChooser.ExtensionFilter("Docx file", "*.docx")
+                            ),
+                            initialDirectory = File(fileName),
+                            mode = FileChooserMode.Save
+                        ).firstOrNull()
+
                         val file = controller.export(
+                            outputFile!!,
                             userViewModel.currentTemplate.inputs,
                             userViewModel.currentTemplate.templateFile
                         )

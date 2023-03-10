@@ -50,35 +50,15 @@ class MainViewController : Controller() {
         }
     }
 
-    fun export(inputs: List<VoiceField>, templateFile: String): File? {
-        val fileName = inputs.firstOrNull { it.isFileName }?.let {
-            it.text.value + ".docx"
-        } ?: "generated.docx"
-        val fileChooser = JFileChooser(FileManager.myDocuments).apply {
-            selectedFile = File(fileName)
-            isAcceptAllFileFilterUsed = false
-            val fileFilter = FileNameExtensionFilter("Only .docx files", "docx")
-            addChoosableFileFilter(fileFilter)
-        }
-        return if (fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
-            var output = fileChooser.selectedFile
-            if (!FilenameUtils.getExtension(fileChooser.name).equals("docx", ignoreCase = true)) {
-                output = File(
-                    output.parentFile,
-                    FilenameUtils.getBaseName(output.name) + ".docx"
-                )
-            }
-            replaceIdsInDocument(
-                inputs = inputs.map {
-                    it.id to it.text.value
-                },
-                input = File("resources", templateFile),
-                output = FileOutputStream(output)
-            )
-            output
-        } else {
-            null
-        }
+    fun export(output: File, inputs: List<VoiceField>, templateFile: String): File {
+        replaceIdsInDocument(
+            inputs = inputs.map {
+                it.id to it.text.value
+            },
+            input = File("resources", templateFile),
+            output = FileOutputStream(output)
+        )
+        return output
     }
 
     private fun replaceIdsInDocument(inputs: List<Pair<String, String>>, input: File, output: FileOutputStream) {
