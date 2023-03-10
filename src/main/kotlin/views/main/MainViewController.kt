@@ -1,27 +1,22 @@
 package views.main
 
 import getResource
-import javafx.beans.property.Property
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
 import javafx.scene.control.TextField
-import managers.AudioManager
 import managers.FileManager
 import managers.speech.SpeechManager
 import managers.speech.SpeechManagerImpl
 import models.VoiceField
 import org.apache.commons.io.FileUtils
-import org.apache.commons.io.FilenameUtils
 import org.apache.poi.openxml4j.opc.OPCPackage
 import org.apache.poi.xwpf.usermodel.XWPFDocument
 import tornadofx.*
 import java.io.File
 import java.io.FileOutputStream
 import java.nio.file.Files
-import javax.swing.JFileChooser
-import javax.swing.filechooser.FileNameExtensionFilter
 
 class MainViewController : Controller() {
 
@@ -35,6 +30,10 @@ class MainViewController : Controller() {
         }
     }
     val microphoneInputs = FXCollections.observableArrayList(speechManager.getSupportedInputDevices())
+    val hasMultipleMicrophones = microphoneInputs.sizeProperty.booleanBinding {
+        val size = (it?.toInt())
+        size != null && size > 0
+    }
     lateinit var selectedTextField: TextField
 
     var onChangeInputCallback: () -> Unit = {}

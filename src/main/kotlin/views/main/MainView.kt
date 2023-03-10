@@ -5,13 +5,12 @@ import javafx.geometry.Orientation
 import javafx.scene.control.Alert
 import javafx.scene.control.ButtonType
 import javafx.scene.control.TextField
-import javafx.scene.input.KeyCombination
 import javafx.scene.layout.Region
 import javafx.stage.FileChooser
 import tornadofx.*
 import java.awt.Desktop
-import java.io.File
 
+// TODO init speech manager with run async
 class MainView() : View() {
 
     private val userViewModel: MainViewModel by inject()
@@ -43,6 +42,8 @@ class MainView() : View() {
                     paddingVertical = 30
                 }
                 button(controller.recordingButtonText) {
+                    // Keep focus on textfield when clicking on this button.
+                    this.focusTraversableProperty().value = false
                     shortcut("Ctrl+R")
                     action {
                         controller.onRecordButtonClicked()
@@ -60,35 +61,38 @@ class MainView() : View() {
                             filters = arrayOf(
                                 FileChooser.ExtensionFilter("Docx file", "*.docx")
                             ),
-                            initialDirectory = File(fileName),
                             mode = FileChooserMode.Save
-                        ).firstOrNull()
-
-                        val file = controller.export(
-                            outputFile!!,
-                            userViewModel.currentTemplate.inputs,
-                            userViewModel.currentTemplate.templateFile
-                        )
-                        if (file != null) {
-                            val alert = Alert(
-                                Alert.AlertType.CONFIRMATION,
-                                "File saved at ${file.absoluteFile}. Would you like to open the file?",
-                                ButtonType.OK, ButtonType.CANCEL
-                            ).apply {
-                                headerText = "Export successful!"
-                                isResizable = true
-                                dialogPane.setPrefSize(400.0, 200.0)
-                                dialogPane.minHeight(Region.USE_PREF_SIZE)
-                            }
-                            val buttonClicked = alert.showAndWait()
-                            if (buttonClicked.isPresent && buttonClicked.get() == ButtonType.OK) {
-                                Desktop.getDesktop().open(file)
+                        ) {
+                            this.initialFileName = fileName
+                        }.firstOrNull()
+                        if (outputFile != null) {
+                            runAsync {
+                                controller.export(
+                                    outputFile,
+                                    userViewModel.currentTemplate.inputs,
+                                    userViewModel.currentTemplate.templateFile
+                                )
+                            } ui { file ->
+                                val alert = Alert(
+                                    Alert.AlertType.CONFIRMATION,
+                                    "File saved at ${file.absoluteFile}. Would you like to open the file?",
+                                    ButtonType.OK, ButtonType.CANCEL
+                                ).apply {
+                                    headerText = "Export successful!"
+                                    isResizable = true
+                                    dialogPane.setPrefSize(400.0, 200.0)
+                                    dialogPane.minHeight(Region.USE_PREF_SIZE)
+                                }
+                                val buttonClicked = alert.showAndWait()
+                                if (buttonClicked.isPresent && buttonClicked.get() == ButtonType.OK) {
+                                    Desktop.getDesktop().open(file)
+                                }
                             }
                         }
                     }
                 }
                 combobox(values = controller.microphoneInputs, property = controller.selectedMicrophoneInput) {
-
+                    visibleWhen(controller.hasMultipleMicrophones)
                 }
             }
         }
