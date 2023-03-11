@@ -1,13 +1,16 @@
 package views.main
 
 import SignInView
+import i18n.Messages
 import javafx.geometry.Orientation
 import javafx.scene.control.Alert
 import javafx.scene.control.ButtonType
 import javafx.scene.control.TextField
 import javafx.scene.layout.Region
 import javafx.stage.FileChooser
+import managers.text.text
 import tornadofx.*
+import views.settings.SettingsView
 import java.awt.Desktop
 
 // TODO init speech manager with run async
@@ -29,6 +32,11 @@ class MainView() : View() {
                         action {
                             close()
                             find(SignInView::class).openWindow()
+                        }
+                    }
+                    item(Messages.settingsTitle.text) {
+                        action {
+                            openInternalWindow(find<SettingsView>())
                         }
                     }
                 }

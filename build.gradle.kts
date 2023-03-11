@@ -40,6 +40,7 @@ dependencies {
         name = "poi-ooxml",
         version = "5.2.0"
     )
+    implementation(kotlin("stdlib-jdk8"))
 }
 
 tasks.test {
@@ -118,4 +119,13 @@ fun getBooleanProperty(key: String, defaultValue: Boolean): Boolean {
     } catch (e: Exception) {
         defaultValue
     }
+}
+
+val compileKotlin: KotlinCompile by tasks
+compileKotlin.kotlinOptions {
+    jvmTarget = "1.8"
+}
+val compileTestKotlin: KotlinCompile by tasks
+compileTestKotlin.kotlinOptions {
+    jvmTarget = "1.8"
 }
