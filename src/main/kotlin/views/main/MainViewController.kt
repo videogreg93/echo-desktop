@@ -34,6 +34,10 @@ class MainViewController : Controller() {
         val size = (it?.toInt())
         size != null && size > 0
     }
+
+    /**
+     * The last text field the user clicked on. Voice recognized text will be applied here.
+     */
     lateinit var selectedTextField: TextField
 
     var onChangeInputCallback: () -> Unit = {}

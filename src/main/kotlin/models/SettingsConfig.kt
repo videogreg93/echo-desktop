@@ -8,7 +8,7 @@ import tornadofx.*
 data class SettingsConfig(
     val phrases: List<String> = observableListOf()
 )
-class SettingsConfigModel {
-    val phrasesProperty = SimpleListProperty<String>()
+class SettingsConfigModel(initialPhrases: List<String>) {
+    val phrasesProperty = SimpleListProperty<String>(initialPhrases.toObservable())
     val phrases by phrasesProperty
 }

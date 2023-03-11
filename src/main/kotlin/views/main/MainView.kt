@@ -3,12 +3,14 @@ package views.main
 import SignInView
 import i18n.Messages
 import javafx.geometry.Orientation
+import javafx.geometry.Pos
 import javafx.scene.control.Alert
 import javafx.scene.control.ButtonType
 import javafx.scene.control.TextField
 import javafx.scene.layout.Region
 import javafx.stage.FileChooser
 import managers.text.text
+import models.VoiceField.Size.*
 import tornadofx.*
 import views.settings.SettingsView
 import java.awt.Desktop
@@ -54,6 +56,7 @@ class MainView() : View() {
                     this.focusTraversableProperty().value = false
                     shortcut("Ctrl+R")
                     action {
+                        userViewModel.startingText.value = controller.selectedTextField.text
                         controller.onRecordButtonClicked()
                     }
                 }
@@ -113,7 +116,23 @@ class MainView() : View() {
                     userViewModel.currentTemplate.inputs.forEachIndexed { index, voiceField ->
                         fieldset(labelPosition = Orientation.VERTICAL) {
                             field(voiceField.label) {
-                                val tf = textfield(voiceField.text)
+                                val tf = textfield(voiceField.text) {
+                                    when (voiceField.size) {
+                                        SMALL -> {
+                                            /* no-op */
+                                        }
+                                        MEDIUM -> {
+                                            setPrefSize(prefWidth, 128.0)
+                                            prefHeight(Region.USE_COMPUTED_SIZE)
+                                            alignment = Pos.TOP_LEFT
+                                        }
+                                        LARGE -> {
+                                            setPrefSize(prefWidth, 170.0)
+                                            prefHeight(Region.USE_COMPUTED_SIZE)
+                                            alignment = Pos.TOP_LEFT
+                                        }
+                                    }
+                                }
                                 if (index == 0) {
                                     controller.selectedTextField = tf
                                 }

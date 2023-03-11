@@ -4,6 +4,7 @@ enum class Messages(val value: String) {
   latestRelease("latestRelease"),
 recording("recording"),
 record("record"),
+settingsPhrasesTitle("settingsPhrasesTitle"),
 chooseATemplate("chooseATemplate"),
 success("success"),
 sign_in_title("sign_in_title"),

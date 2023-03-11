@@ -11,8 +11,6 @@ class SettingsViewModel : ItemViewModel<SettingsConfigModel>() {
     val phrases = bind(SettingsConfigModel::phrasesProperty)
 
     override fun onCommit(commits: List<Commit>) {
-        println("Saving")
-        println(phrases)
         SettingsManager.settings.value = SettingsConfig(phrases)
     }
 

@@ -6,6 +6,7 @@ import com.microsoft.cognitiveservices.speech.SpeechConfig
 import com.microsoft.cognitiveservices.speech.SpeechRecognizer
 import com.microsoft.cognitiveservices.speech.audio.AudioConfig
 import managers.AudioManager
+import managers.settings.SettingsManager
 import org.hera.echo_desktop.BuildConfig
 
 class SpeechManagerImpl(private val audioManager: AudioManager) : SpeechManager {
@@ -66,6 +67,8 @@ class SpeechManagerImpl(private val audioManager: AudioManager) : SpeechManager 
     }
 
     override fun startContinuousRecognitionAsync() {
+        setPhraseList(SettingsManager.settings.value.phrases)
+        println("Set phrases to ${SettingsManager.settings.value.phrases}")
         recognizer.startContinuousRecognitionAsync()
     }
 
