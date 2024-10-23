@@ -13,7 +13,7 @@ class AudioManager {
 
     fun getInputDevices(): List<InputDevice> {
         return try {
-            "${FileManager.mainFolder.toFile()}/getDeviceIds.exe".runCommand(FileManager.mainFolder.toFile())?.let {
+            "C:\\Users\\grego\\IdeaProjects\\echo-desktop\\getDeviceIds.exe".runCommand(File("C:\\Users\\grego\\IdeaProjects\\echo-desktop"))?.let {
                 return if (it.isBlank()) {
                     emptyList()
                 } else {
