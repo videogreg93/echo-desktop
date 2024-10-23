@@ -31,4 +31,8 @@ class SpeechManagerAbstract: SpeechManager {
     override fun setInputDevice(device: AudioManager.InputDevice) {
 
     }
+
+    override fun setPhraseList(phrases: List<String>) {
+        /* no-op */
+    }
 }

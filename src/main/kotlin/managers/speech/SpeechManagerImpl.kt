@@ -1,10 +1,12 @@
 package managers.speech
 
 import com.microsoft.cognitiveservices.speech.CancellationReason
+import com.microsoft.cognitiveservices.speech.PhraseListGrammar
 import com.microsoft.cognitiveservices.speech.SpeechConfig
 import com.microsoft.cognitiveservices.speech.SpeechRecognizer
 import com.microsoft.cognitiveservices.speech.audio.AudioConfig
 import managers.AudioManager
+import managers.settings.SettingsManager
 import org.hera.echo_desktop.BuildConfig
 
 class SpeechManagerImpl(private val audioManager: AudioManager) : SpeechManager {
@@ -65,6 +67,8 @@ class SpeechManagerImpl(private val audioManager: AudioManager) : SpeechManager 
     }
 
     override fun startContinuousRecognitionAsync() {
+        setPhraseList(SettingsManager.settings.value.phrases)
+        println("Set phrases to ${SettingsManager.settings.value.phrases}")
         recognizer.startContinuousRecognitionAsync()
     }
 
@@ -80,6 +84,13 @@ class SpeechManagerImpl(private val audioManager: AudioManager) : SpeechManager 
         currentInputDevice = device
         println("Changing device to $device")
         recognizer = setupSpeech()
+    }
+
+    override fun setPhraseList(phrases: List<String>) {
+        val phraselist = PhraseListGrammar.fromRecognizer(recognizer)
+        phrases.forEach {
+            phraselist.addPhrase(it)
+        }
     }
 
     companion object {

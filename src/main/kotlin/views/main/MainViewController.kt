@@ -1,27 +1,22 @@
 package views.main
 
 import getResource
-import javafx.beans.property.Property
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
 import javafx.scene.control.TextField
-import managers.AudioManager
 import managers.FileManager
 import managers.speech.SpeechManager
 import managers.speech.SpeechManagerImpl
 import models.VoiceField
 import org.apache.commons.io.FileUtils
-import org.apache.commons.io.FilenameUtils
 import org.apache.poi.openxml4j.opc.OPCPackage
 import org.apache.poi.xwpf.usermodel.XWPFDocument
 import tornadofx.*
 import java.io.File
 import java.io.FileOutputStream
 import java.nio.file.Files
-import javax.swing.JFileChooser
-import javax.swing.filechooser.FileNameExtensionFilter
 
 class MainViewController : Controller() {
 
@@ -35,6 +30,14 @@ class MainViewController : Controller() {
         }
     }
     val microphoneInputs = FXCollections.observableArrayList(speechManager.getSupportedInputDevices())
+    val hasMultipleMicrophones = microphoneInputs.sizeProperty.booleanBinding {
+        val size = (it?.toInt())
+        size != null && size > 0
+    }
+
+    /**
+     * The last text field the user clicked on. Voice recognized text will be applied here.
+     */
     lateinit var selectedTextField: TextField
 
     var onChangeInputCallback: () -> Unit = {}
@@ -50,35 +53,15 @@ class MainViewController : Controller() {
         }
     }
 
-    fun export(inputs: List<VoiceField>, templateFile: String): File? {
-        val fileName = inputs.firstOrNull { it.isFileName }?.let {
-            it.text.value + ".docx"
-        } ?: "generated.docx"
-        val fileChooser = JFileChooser(FileManager.myDocuments).apply {
-            selectedFile = File(fileName)
-            isAcceptAllFileFilterUsed = false
-            val fileFilter = FileNameExtensionFilter("Only .docx files", "docx")
-            addChoosableFileFilter(fileFilter)
-        }
-        return if (fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
-            var output = fileChooser.selectedFile
-            if (!FilenameUtils.getExtension(fileChooser.name).equals("docx", ignoreCase = true)) {
-                output = File(
-                    output.parentFile,
-                    FilenameUtils.getBaseName(output.name) + ".docx"
-                )
-            }
-            replaceIdsInDocument(
-                inputs = inputs.map {
-                    it.id to it.text.value
-                },
-                input = File("resources", templateFile),
-                output = FileOutputStream(output)
-            )
-            output
-        } else {
-            null
-        }
+    fun export(output: File, inputs: List<VoiceField>, templateFile: String): File {
+        replaceIdsInDocument(
+            inputs = inputs.map {
+                it.id to it.text.value
+            },
+            input = File("resources", templateFile),
+            output = FileOutputStream(output)
+        )
+        return output
     }
 
     private fun replaceIdsInDocument(inputs: List<Pair<String, String>>, input: File, output: FileOutputStream) {

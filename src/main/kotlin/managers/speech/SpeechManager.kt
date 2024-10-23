@@ -11,4 +11,5 @@ interface SpeechManager {
     fun stopContinuousRecognitionAsync()
     fun getSupportedInputDevices(): List<AudioManager.InputDevice>
     fun setInputDevice(device: AudioManager.InputDevice)
+    fun setPhraseList(phrases: List<String>)
 }
